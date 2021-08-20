@@ -42,15 +42,15 @@ function setup() {
     imageMode(CENTER);
     for (let i = 0; i < 20; i++) {
         if (i < 11) {
-            img[i] = loadImage('backimg' + i + '.JPG');
+            img[i] = loadImage('img/backimg' + i + '.JPG');
         } else {
-            img[i] = loadImage('backimg' + (20 - i) + '.JPG');
+            img[i] = loadImage('img/backimg' + (20 - i) + '.JPG');
         }
     }
     stratimg = loadImage('startimg.JPG')
     num = 5;
-    ant = loadImage('ant.png');
-    myant = loadImage('White_ant.png');
+    ant = loadImage('img/ant.png');
+    myant = loadImage('img/White_ant.png');
     antsize = 10;
     touchFlag = false;
     antX = width / 2 + 100;
