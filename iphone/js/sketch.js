@@ -20,6 +20,9 @@ let posY;
 let Ants;
 let size;
 let antimg;
+let myant;
+let start;
+let startimg;
 
 
 function setup() {
@@ -44,17 +47,20 @@ function setup() {
             img[i] = loadImage('backimg' + (20 - i) + '.JPG');
         }
     }
+    stratimg = loadImage('startimg.JPG')
     num = 5;
     ant = loadImage('ant.png');
+    myant = loadImage('White_ant.png');
     antsize = 10;
     touchFlag = false;
-    antX = width / 2;
-    antY = height / 4;
+    antX = width / 2 + 100;
+    antY = height / 6;
     angle = 0;
     count = 0;
     wid = width;
     hed = height;
     Ants = new Array(num);
+    start = false;
     maxDist = sqrt(wid * wid + hed * hed);
     for (let i = 0; i < num; i++) {
         Ants[i] = new ants();
@@ -77,7 +83,7 @@ function draw() {
     push();
     translate(antX, antY);
     rotate(angle);
-    image(ant, 0, 0, antsize, antsize);
+    image(myant, 0, 0, antsize, antsize);
     pop();
     count++;
 }
@@ -128,8 +134,8 @@ function imgcluc() {
 
 
 function hoolcluc() {
-    antX -= 5 * sin(angle);
-    antY += 5 * cos(angle);
+    antX -= 2 * sin(angle);
+    antY += 2 * cos(angle);
 }
 
 class ants {

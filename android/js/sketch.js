@@ -1,104 +1,158 @@
+let img = [];
+let ant;
+let antsize;
+let antX;
+let antY;
+let touchFlag;
+let spX;
+let spY;
+let pmX;
+let pmY;
+let angle;
+let num;
+let count;
+let wid;
+let hed;
+let maxDist;
+let theta;
 let posX;
 let posY;
-let sx;
-let sy;
-let thita;
-let n;
-let t;
-let d;
-let flag;
-let flag_change;
+let Ants;
+let size;
+let antimg;
+let myant;
 
 
 function setup() {
+    window.addEventListener(
+        "touchstart",
+        function(event) {
+            event.preventDefault();
+        }, { passive: false }
+    );
+    window.addEventListener(
+        "touchmove",
+        function(event) {
+            event.preventDefault();
+        }, { passive: false }
+    );
     createCanvas(windowWidth, windowHeight);
-    posX = width / 2;
-    posY = height / 2;
-    sx = width / 2;
-    sy = height - 150;
-    thita = 0;
-    n = 0;
-    t = 0;
-    d = 50;
-    flag = Boolean(false);
-    noStroke();
+    imageMode(CENTER);
+    for (let i = 0; i < 20; i++) {
+        if (i < 11) {
+            img[i] = loadImage('backimg' + i + '.JPG');
+        } else {
+            img[i] = loadImage('backimg' + (20 - i) + '.JPG');
+        }
+    }
+    num = 5;
+    ant = loadImage('ant.png');
+    myant = loadImage('White_ant.png')
+    antsize = 10;
+    touchFlag = false;
+    antX = width - 50;
+    antY = 50;
+    angle = 0;
+    count = 0;
+    wid = width;
+    hed = height;
+    Ants = new Array(num);
+    maxDist = sqrt(wid * wid + hed * hed);
+    for (let i = 0; i < num; i++) {
+        Ants[i] = new ants();
+    }
+    frameRate(30);
 }
+
 
 function draw() {
-    if (t % 3 == 0) {
-        background(255);
-        for (let i = 0; i < 50; i++) {
-            fill((250 / 25) * (((25 - i) % 25 + n) % 25));
-            circle(width / 2, height / 2, width / 25 * (50 - i));
-        }
-        n++;
-
-        fill(200);
-        if (flag) {
-            comtcluc();
-        }
-        curcluc();
-        circle(width / 2, height - 150, 200);
-        fill(0);
-        circle(sx, sy, 100);
-        fill(255, 0, 0);
-        circle(posX, posY, d);
+    background(255);
+    image(img[count % 20], wid / 2, hed / 2, wid, hed);
+    imgcluc();
+    hoolcluc();
+    for (let i = 0; i < num; i++) {
+        Ants[i].antshool();
     }
-    t++;
+    push();
+    translate(antX, antY);
+    rotate(angle);
+    image(myant, 0, 0, antsize, antsize);
+    pop();
+    count++;
 }
-
 
 function touchStarted() {
-    if (dist(sx, sy, touches[0].x, touches[0].y) <= 50) {
-        flag = true;
+    if (touches[0].y > 2 * height / 3) {
+        touchFlag = true;
     }
+    pmX = touches[0].x;
+    pmY = touches[0].y;
 }
 
-function touchMoved() {
-    sx = touches[0].x;
-    sy = touches[0].y;
-}
 
 function touchEnded() {
-    flag = false;
-    sx = width / 2;
-    sy = height - 150;
+    touchFlag = false;
+    spX = 0;
+    spY = 0;
+    pmX = 0;
+    pmY = 0;
 }
 
 
-function comtcluc() {
-
-    let thita_s = atan2(sx - width / 2, sy - (height - 150));
-
-
-
-    if (dist(sx, sy, width / 2, height - 150) > 50) {
-        sx = width / 2 + 50 * sin(thita_s);
-        sy = height - 150 + 50 * cos(thita_s);
+function touchMoved() {
+    if (touchFlag) {
+        spX = (touches[0].x - pmX) / 5;
+        spY = (touches[0].y - pmY) / 5;
+        pmX = touches[0].x;
+        pmY = touches[0].y;
+        antX += spX;
+        antY += spY;
     }
 }
 
-function curcluc() {
 
-    posX += (sx - width / 2) / 10;
-    posY += (sy - (height - 150)) / 10;
-    thita = atan2(posX - width / 2, posY - height / 2);
+function imgcluc() {
+    if (antX < antsize / 2) {
+        antX = antsize / 2;
+    } else if (antX > width - antsize / 2) {
+        antX = width - antsize / 2;
+    }
+    if (antY < antsize / 2) {
+        antY = antsize / 2;
+    } else if (antY > height - antsize / 2) {
+        antY = height - antsize / 2;
+    }
+    antsize = dist(width / 2, height / 3, antX, antY) / 5;
+    angle = atan2(height / 3 - antY, width / 2 - antX) - PI / 2;
+}
 
-    if (posX < 25) {
-        posX = 25;
-    } else if (posX > width - 25) {
-        posX = width - 25;
+
+function hoolcluc() {
+    antX -= 2 * sin(angle);
+    antY += 2 * cos(angle);
+}
+
+class ants {
+    constructor() {
+        this.posX = random(0, width);
+        this.posY = random(0, 2 * height / 3);
+        this.theta = atan2(height / 3 - this.posY, width / 2 - this.posX) - PI / 2;
+        this.size = dist(width / 2, height / 3, this.posX, this.posY) / 5;
     }
 
-    if (posY < 25) {
-        posY = 25;
-    } else if (posY > height - 25) {
-        posY = height - 25;
+    antshool() {
+        push();
+        translate(this.posX, this.posY);
+        rotate(this.theta);
+        image(ant, 0, 0, this.size, this.size);
+        pop();
+        this.posX -= 2 * sin(this.theta);
+        this.posY += 2 * cos(this.theta);
+        this.size = dist(width / 2, height / 3, this.posX, this.posY) / 5;
+        if (this.posX > width / 2 - 10 && this.posX < width / 2 + 10 && this.posY < height / 3 + 10 && this.posY > height / 3 - 10) {
+            this.posX = random(0, width);
+            this.posY = random(0, 2 * height / 3);
+            this.theta = atan2(height / 3 - this.posY, width / 2 - this.posX) - PI / 2;
+        }
     }
-
-    posX -= 4 * sin(thita);
-    posY -= 4 * cos(thita);
-
-    d = dist(width / 2, height / 2, posX, posY) / 5 + 10;
-
 }
